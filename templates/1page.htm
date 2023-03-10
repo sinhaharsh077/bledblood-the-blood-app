@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <title>
+      User Page
+    </title>
+<style>
+      body {
+        background-color: crimson;
+        color: black;
+        font-size: 16px;
+        font-family: sans-serif;
+	}
+.card {
+  background-color: white;
+  color: black;
+  padding: 20px;
+  margin: 20px;
+}
+
+#summary-link {
+  font-size: 24px;
+  text-decoration: none;
+  color: black;
+  margin-right: 20px;
+}
+
+#achievements-link {
+  font-size: 24px;
+  text-decoration: none;
+  color: black;
+  margin-right: 20px;
+}
+#logout-link {
+  font-size: 24px;
+  text-decoration: none;
+  color: black;
+}
+
+.separator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.separator:before,
+.separator:after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background-color: white;
+  margin: 0 10px;
+}
+
+.separator span {
+  display: inline-block;
+  font-size: 24px;
+}
+
+.separator-vertical {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  margin: 0 10px;
+  background-color: black;
+}
+
+.txt_field {
+  margin-top: 20px;
+}
+
+.txt_field label {
+  font-size: 20px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+.txt_field input {
+  font-size: 20px;
+  padding: 5px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f0f0f0;
+}
+
+button {
+  font-size: 20px;
+  padding: 5px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: white;
+  color: #F16106;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #8B0000;
+}
+
+#blood-banks-list {
+  margin-top: 20px;
+}
+
+#approved-list-of-requests {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.achievement {
+  margin-top: 20px;
+  font-size: 20px;
+}
+
+.achievement span {
+  font-weight: bold;
+}
+</style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+			margin-bottom: 20px;
+			border: 1px solid #ddd;
+		}
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border-bottom: 1px solid #ddd;
+		}
+		th {
+			background-color: #f2f2f2;
+		}
+	</style>
+  </head>
+  <body>
+	<div class="card">
+
+    <div class="separator">
+        <a id="summary-link" href="{{ url_for('summary') }}">Summary</a>
+        <span class="separator-vertical"></span>
+        <a id="achievements-link" href="{{ url_for('achievements') }}">Achievements</a>
+        <span class="separator-vertical"></span>
+        <a id="logout-link" href="{{ url_for('logout') }}">Logout</a>
+    </div>
+	</div>
+
+<div class="card">
+    <h1>
+      Welcome {{display_username}}
+    </h1>
+	
+    <div>
+      <h3>You Can donate blood.</h3>
+    </div>
+
+	<div class="txt_field">
+	<form id="pincode-form">
+	<label for="pincode">Enter Your Pincode</label>
+	<input type="number" name="pincode" id="pincode" placeholder="Pincode changed?">
+	<button type="submit">Blood Banks Nearby</button>
+	</div>
+	<div id="blood-banks-list"></div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			// Attach a submit event handler to the pin code form
+			$("#pincode-form").submit(function(event) {
+				// Prevent the form from submitting normally
+				event.preventDefault();
+				
+				// Get the pincode entered by the user
+				var pinCode = $("#pincode").val();
+				
+				// Send an AJAX request to the server to look up blood banks by pin code
+				$.ajax({
+					type: "POST",
+					url: "/pincode-lookup",
+					data: { pincode: pinCode },
+					success: function(data) {
+						// Replace the contents of the blood banks list with the HTML returned by the server
+						$("#blood-banks-list").html(data.html);
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						alert("Error: " + textStatus + " " + errorThrown);
+					}
+				});
+			});
+		});
+	</script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		function addRequest(sender, bank_id) {
+			$.ajax({
+				type: 'POST',
+				url: '/add-request/' + sender + '/' + bank_id,
+				data: { Received_from: sender, Received_by: bank_id },
+				success: function(data) {
+					alert(data.message);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("Error: " + textStatus + " " + errorThrown);
+				}
+			});
+		};
+	</script>
+	<div>
+	<h3>Requests Sent once Approved will be listed here. <button onclick="approvedlistofrequests();">Requests</button></h3>
+	Caution: You can send request to only one bank at a time. Bashing the button will cause Internal Server Error.
+	</div>
+	<div id="approved-list-of-requests"></div>
+	<script type="text/javascript">
+		function approvedlistofrequests() {
+				$.ajax({
+					type: "POST",
+					url: "/approvedlistofrequests",
+					success: function(data) {
+						// Replace the contents of the list of requests with the HTML returned by the server
+						$("#approved-list-of-requests").html(data.html);
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						alert("Error: " + textStatus + " " + errorThrown);
+					}
+				});
+			};
+	</script>
+	<script>
+    function downloadslipfunc(request_recipient, bank_name, bank_address, Response_date) {
+        $.ajax({
+            type: 'POST',
+            url: '/user/appointment_slip/' + request_recipient + '/' + bank_name + '/' + bank_address + '/' + Response_date,
+            data: { request_recipient: request_recipient, bank_name: bank_name, bank_address: bank_address, Response_date: Response_date },
+            success: function(data) {
+                var blob = new Blob([data], {type: 'application/pdf'});
+                var link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.download = 'appointment.pdf';
+                link.click();
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                alert("Error: " + textStatus + " " + errorThrown);
+            }
+        });
+    };
+</script>
+
+
+    <div class="achievement">
+    </div>
+</div>
+  </body>
+</html>

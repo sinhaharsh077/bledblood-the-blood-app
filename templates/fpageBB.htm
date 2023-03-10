@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" dir ="ltr">
+  <head><meta charset="utf-8">
+	<link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
+    <title>
+      Blood Bank Form Page
+    </title>
+  </head>
+
+  <body>
+<div class="center">
+<h1>Blood Bank Login</h1>
+<form method="post">
+	<div class="txt_field">
+	<input type="text" name="bname" required>
+	<label>BloodBank Name</label>
+	</div>
+
+	<div class="txt_field">
+	<input type="text" name="bank_pincode" required>
+	<label>Pincode</label>
+	</div>
+
+	<div class="pass">
+	Closed?
+	</div>
+
+	<input type="submit" value="Login">
+	<div class="signup_link">
+	New Registration? Contact bledblood Admin for registration. 
+	</div>
+</form>
+</body>
+</html>

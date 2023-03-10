@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+		<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>
+      Blood Bank Administrator Page
+    </title>
+<style>
+      body {
+        background-color: crimson;
+        color: black;
+        font-size: 16px;
+        font-family: sans-serif;
+	}
+.card {
+  background-color: white;
+  color: black;
+  padding: 20px;
+  margin: 20px;
+}
+
+#logout-link {
+  font-size: 24px;
+  text-decoration: none;
+  color: black;
+}
+
+
+
+
+</style>
+  </head>
+  <body>
+<div class="card">
+    <h1>
+      Welcome {{d_name}}
+    </h1>
+    <div>
+      <a id="logout-link" a href= '{{ url_for('bblogout') }}'>Logout</a>
+    </div>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+			margin-top: 20px;
+			margin-bottom: 20px;
+			border: 1px solid #ddd;
+		}
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border-bottom: 1px solid #ddd;
+		}
+		th {
+			background-color: #f2f2f2;
+		}
+	</style>
+	<div>
+	<h3>Following people want to make a donation: <button onclick="listofrequests();">Requests</button></h3>
+	</div>
+	<div id="list-of-requests"></div>
+	<script type="text/javascript">
+		function listofrequests() {
+				$.ajax({
+					type: "POST",
+					url: "/listofrequests",
+					success: function(data) {
+						// Replace the contents of the list of requests with the HTML returned by the server
+						$("#list-of-requests").html(data.html);
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						alert("Error: " + textStatus + " " + errorThrown);
+					}
+				});
+			};
+	</script>
+
+	<script>
+		function approveRequest(Req_id) {
+			$.ajax({
+				type: 'POST',
+				url: '/approve-request/' + Req_id,
+				data: { Req_id: Req_id },
+				success: function(data) {
+					alert(data.message);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("Error: " + textStatus + " " + errorThrown);
+				}
+			});
+		};
+		function cancelRequest(Req_id) {
+			$.ajax({
+				type: 'POST',
+				url: '/cancel-request/' + Req_id,
+				data: { Req_id: Req_id },
+				success: function(data) {
+					alert(data.message);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("Error: " + textStatus + " " + errorThrown);
+				}
+			});
+		};
+		function rejectRequest(Req_id) {
+			$.ajax({
+				type: 'POST',
+				url: '/reject-request/' + Req_id,
+				data: { Req_id: Req_id },
+				success: function(data) {
+					alert(data.message);
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					alert("Error: " + textStatus + " " + errorThrown);
+				}
+			});
+		};
+	</script>
+
+<h2>Blood Stock Chart</h2>
+	
+    <div id="chart-div">
+        <!-- The chart HTML code will be injected here -->
+    </div>
+</div>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script>
+    var chartDiv = document.getElementById('chart-div');
+    chartDiv.innerHTML = '{{ chart|safe }}';
+    </script>
+	<div class="card">
+	<h3>Want to update the Blood Stock?</h3>
+	<form id="blood-status-form" action="/update" method="POST">
+    		<label for="A_pos">A+</label>
+    		<input type="number" id="A_pos" name="A_pos"><br><br>
+    		<label for="AB_pos">AB+</label>
+    		<input type="number" id="AB_pos" name="AB_pos"><br><br>
+    		<label for="B_pos">B+</label>
+    		<input type="number" id="B_pos" name="B_pos"><br><br>
+    		<label for="O_pos">O+</label>
+    		<input type="number" id="O_pos" name="O_pos"><br><br>
+    		<label for="A_neg">A-</label>
+    		<input type="number" id="A_neg" name="A_neg"><br><br>
+    		<label for="AB_neg">AB-</label>
+    		<input type="number" id="AB_neg" name="AB_neg"><br><br>
+    		<label for="B_neg">B-</label>
+    		<input type="number" id="B_neg" name="B_neg"><br><br>
+    		<label for="O_neg">O-</label>
+    		<input type="number" id="O_neg" name="O_neg"><br><br>
+    		<input type="submit" value="Submit">
+	</form>
+	</div>
+<script>
+  document.getElementById('blood-status-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    var form = e.target;
+    var formData = new FormData(form);
+
+    fetch(form.action, {
+      method: 'POST',
+      body: formData
+    })
+    .then(function(response) {
+      if (response.ok) {
+        alert('Blood Status updated');
+      } else {
+        alert('Error updating blood status.');
+      }
+    })
+    .catch(function(error) {
+      console.error(error);
+      alert('Error updating blood status.');
+    });
+  });
+</script>
+	<style>
+		form {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			align-items: center;
+			max-width: 600px;
+			margin: auto;
+			padding: 32px;
+			background-color: #f2f2f2;
+			border-radius: 8px;
+			font-family: Arial, sans-serif;
+		}
+
+		label {
+			display: block;
+			font-size: 20px;
+			font-weight: bold;
+			margin-bottom: 16px;
+		}
+
+		input[type="number"] {
+			display: block;
+			width: 80px;
+			height: 40px;
+			font-size: 20px;
+			padding: 4px;
+			border-radius: 4px;
+			border: none;
+			margin-bottom: 16px;
+			text-align: center;
+			background-color: #fff;
+			box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.16);
+		}
+
+		input[type="submit"] {
+			display: block;
+			width: 100%;
+			height: 60px;
+			font-size: 24px;
+			font-weight: bold;
+			color: #fff;
+			background-color: #FF5E0E;
+			border: none;
+			border-radius: 8px;
+			margin-top: 32px;
+			cursor: pointer;
+			box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.16);
+		}
+
+		input[type="submit"]:hover {
+			background-color: #FF0000;
+		}
+
+		@media (max-width: 768px) {
+			form {
+				flex-direction: column;
+			}
+			input[type="number"] {
+				width: 100%;
+			}
+		}
+	</style>
+  </body>
+</html>

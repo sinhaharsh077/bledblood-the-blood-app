@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" dir ="ltr">
+  <head><meta charset="utf-8">
+	<link rel="stylesheet" type= "text/css" href= "{{ url_for('static',filename='style.css') }}">
+    <title>
+      Form Page
+    </title>
+  </head>
+
+  <body>
+<div class="center">
+<h1>User Login</h1>
+<form method="post">
+	<div class="txt_field">
+	<input type="text" name="username" required>
+	<label>Username</label>
+	</div>
+
+	<div class="txt_field">
+	<input type="text" name="pswd" required>
+	<label>Password</label>
+	</div>
+
+	<input type="submit" value="Login">
+	<div class="signup_link">
+	New User?<a href="{{ url_for('registerpage') }}">Signup</a>
+	</div>
+</form>
+</body>
+</html>

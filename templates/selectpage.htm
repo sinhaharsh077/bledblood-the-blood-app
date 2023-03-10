@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Select Page</title>
+    <link href="https://fonts.googleapis.com/css?family=Cantora+One&display=swap" rel="stylesheet">
+    <style>
+      body {
+        background: linear-gradient(to bottom right, #8B0000, #FF5733);
+        margin: 0;
+        padding: 0;
+      }
+
+      .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+
+      .card {
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        width: 400px;
+        margin: 0 20px;
+      }
+
+      .card:hover {
+        transform: scale(1.15);
+      }
+
+      .card h1 {
+        font-family: 'Cantora One', sans-serif;
+        font-size: 36px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .button {
+        background-color: #FF5733;
+        border: none;
+        border-radius: 10px;
+        color: #fff;
+        cursor: pointer;
+        font-family: 'Cantora One', sans-serif;
+        font-size: 24px;
+        padding: 10px 20px;
+        transition: all 0.3s ease;
+        width: 100%;
+      }
+
+      .button:hover {
+        background-color: #8B0000;
+        transform: scale(1.15);
+      }
+
+      .separator {
+        height: 50px;
+      }
+	
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <h1>User Login</h1>
+        <button class="button" onclick="window.location.href = '{{ url_for('user_selectpage') }}';">
+          User Login
+        </button>
+      </div>
+      <div class="card">
+        <h1>Blood Bank Login</h1>
+        <button class="button" onclick="window.location.href = '{{ url_for('bbloginpage') }}';">
+          Blood Bank Login
+        </button>
+      </div>
+    </div>
+  </body>
+</html>
